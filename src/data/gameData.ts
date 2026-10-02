@@ -23,7 +23,8 @@ import { CLASS_EQUIPMENT, CLASS_GEAR_IDS } from '../utils/classEquipment';
 // Generated raster sprites. Keep these paths centralized so character and item art stays consistent.
 import dungeonCaveImg from '../assets/battle/cave-bat.webp';
 
-const HERO_SPRITE_ROOT = '/assets/sprites/generated/heroes';
+const HERO_SPRITE_ROOT = '/assets/sprites/generated/heroes/reference';
+const LEGACY_HUNTER_SPRITE = '/assets/sprites/generated/heroes/hunter.webp';
 const MONSTER_SPRITE_ROOT = '/assets/sprites/generated/monsters';
 const GEAR_SPRITE_ROOT = '/assets/sprites/generated/ui/gear';
 
@@ -32,7 +33,7 @@ const HERO_SPRITES = {
   assassin: `${HERO_SPRITE_ROOT}/assassin.webp`,
   berserker: `${HERO_SPRITE_ROOT}/berserker.webp`,
   druid: `${HERO_SPRITE_ROOT}/druid.webp`,
-  hunter: `${HERO_SPRITE_ROOT}/hunter.webp`,
+  hunter: LEGACY_HUNTER_SPRITE,
   knight: `${HERO_SPRITE_ROOT}/knight.webp`,
   mage: `${HERO_SPRITE_ROOT}/mage.webp`,
   necromancer: `${HERO_SPRITE_ROOT}/necromancer.webp`,

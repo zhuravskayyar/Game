@@ -7,11 +7,12 @@ import { ResourceBadge, RpgButton } from '../ui/BestiaryUI';
 
 interface TopHeaderProps {
   onOpenCharacterSheet: () => void;
+  onOpenMore: () => void;
 }
 
 const compactCount = (value: number) => value >= 10000 ? `${(value / 1000).toFixed(1)}k` : value.toLocaleString();
 
-export const TopHeader: React.FC<TopHeaderProps> = ({ onOpenCharacterSheet }) => {
+export const TopHeader: React.FC<TopHeaderProps> = ({ onOpenCharacterSheet, onOpenMore }) => {
   const { player, meditateOrRefillEnergy, premium } = useGame();
   const [showEnergyModal, setShowEnergyModal] = useState(false);
 
@@ -26,29 +27,32 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ onOpenCharacterSheet }) =>
 
   return <>
     <header className="game-header sticky top-0 z-30 px-2.5 py-2">
-      <div className="mx-auto flex max-w-lg items-center gap-2">
-        <button onClick={onOpenCharacterSheet} aria-label="Открыть лист персонажа" className="flex min-w-0 flex-1 items-center gap-2 text-left">
-          <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-[#62543b] bg-[#101315]">
-            <img src={heroImage} alt="" className="h-full w-full object-cover object-top" referrerPolicy="no-referrer" />
-            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-center font-mono text-[11px] font-bold leading-4 text-[#e3c983]">{player.level}</span>
+      <div className="game-hud-inner mx-auto flex w-full items-center gap-2">
+        <button onClick={onOpenCharacterSheet} aria-label="Открыть лист персонажа" className="game-hud-player flex min-w-0 flex-1 items-center gap-2 text-left">
+          <span className="game-hud-avatar relative h-10 w-10 shrink-0 overflow-visible rounded-full border border-[#977344] bg-[#101315]">
+            <img src={heroImage} alt="" className="game-hud-avatar-art h-full w-full rounded-full object-cover object-top" referrerPolicy="no-referrer" />
+            <span className="game-hud-level absolute inset-x-0 bottom-0 bg-black/80 text-center font-mono text-[11px] font-bold leading-4 text-[#e3c983]">{player.level}</span>
+            {player.statPoints > 0 && <span className="game-hud-point-dot" aria-label={`${player.statPoints} нераспределённых очков`} title={`${player.statPoints} нераспределённых очков`}>+</span>}
           </span>
           <span className="min-w-0 flex-1">
             <span className="flex min-w-0 items-center gap-1.5">
-              <span className="truncate text-[13px] font-semibold text-[#e2ded5]">{player.name}</span>
+              <span className="game-hud-name min-w-0 truncate text-[13px] font-semibold text-[#e2ded5]">{player.name}</span>
               {premium.active && <span className="inline-flex shrink-0 items-center gap-0.5 text-[11px] font-bold uppercase tracking-wide text-[#d1ad67]" title="Premium"><RpgIcon kind="crown" size={12} className="text-[#c7a365]" /> VIP</span>}
-              {player.statPoints > 0 && <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-[#c7a365] text-[11px] font-bold text-black">+</span>}
             </span>
-            <span className="mt-0.5 block truncate text-[11px] text-[#918c82]">{heroClass.name} · Ур. {player.level}</span>
-            <span className="mt-1 flex items-center gap-1.5">
+            <span className="game-hud-class mt-0.5 block truncate text-[11px] text-[#918c82]">{heroClass.name} · Ур. {player.level}</span>
+            <span className="game-hud-exp mt-1 flex items-center gap-1.5">
               <span className="progress-track h-1.5 flex-1"><span className="progress-fill is-energy block" style={{ width: `${expPct}%` }} /></span>
               <span className="w-8 text-right font-mono text-[11px] text-[#c7a365]">{expPct}%</span>
             </span>
           </span>
         </button>
 
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="game-hud-resources flex shrink-0 items-center gap-1.5">
           <ResourceBadge kind="gold" value={compactCount(player.gold)} title="Золото" />
           <ResourceBadge kind="energy" value={`${currentEnergy}/${maxEnergy}`} onClick={() => setShowEnergyModal(true)} title="Энергия. Открыть способы восстановления" />
+          <button type="button" onClick={onOpenMore} aria-label="Открыть дополнительные разделы и настройки" className="hero-settings-button">
+            <RpgIcon kind="settings" size={18} />
+          </button>
         </div>
       </div>
     </header>

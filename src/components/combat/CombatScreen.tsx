@@ -87,6 +87,7 @@ export const CombatScreen: React.FC<{ onContinueDungeon?: () => void; onReturnTo
 
   const combatPotions = player.inventory.filter(i => i.type === 'potion');
   const potionCount = combatPotions.reduce((sum, item) => sum + (item.stackCount || 1), 0);
+  const quickSkills = player.skills.filter(skill => !skill.hidden).slice(0, 4);
 
   const handleStartBattle = (mon: typeof MONSTERS[string]) => {
     setEnergyError(null);
@@ -390,6 +391,45 @@ export const CombatScreen: React.FC<{ onContinueDungeon?: () => void; onReturnTo
           </div>
         ) : (
           <div className={`space-y-2 transition-all ${turnPhase === 'monster' ? 'pointer-events-none opacity-60' : 'opacity-100'}`}>
+            <section className="combat-skill-loadout" aria-label="Быстрый доступ к навыкам героя">
+              <div className="combat-skill-loadout-heading"><RpgIcon kind="skill" size={15} />Быстрые навыки</div>
+              <div className="combat-skill-slot-grid">
+                {Array.from({ length: 4 }, (_, slotIndex) => {
+                  const skill = quickSkills[slotIndex];
+                  if (!skill) return (
+                    <div key={`empty-skill-slot-${slotIndex}`} className="combat-skill-slot is-empty" aria-label="Свободный слот навыка">
+                      <RpgIcon kind="skill" size={18} />
+                      <span>Пусто</span>
+                    </div>
+                  );
+
+                  const manaCost = talentManaCost(skill.manaCost, player.talents);
+                  const hasMp = combatPlayerMp >= manaCost;
+                  const levelLocked = player.level < skill.levelReq;
+                  const cooldown = skill.currentCooldown || 0;
+                  const onCooldown = cooldown > 0;
+                  const canUse = hasMp && !levelLocked && !onCooldown;
+                  const disabled = !canUse || turnPhase !== 'player';
+                  const slotStatus = onCooldown ? `Перезарядка: ${cooldown}` : levelLocked ? `Ур. ${skill.levelReq}` : `${manaCost} MP`;
+
+                  return (
+                    <button
+                      key={skill.id}
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => performPlayerAction('skill', skill.id)}
+                      aria-label={`${skill.name}. ${onCooldown ? `Перезарядка: ${cooldown}` : levelLocked ? `Доступно с уровня ${skill.levelReq}` : hasMp ? `${manaCost} MP` : `Нужно ${manaCost} MP`}`}
+                      title={`${skill.name} · ${slotStatus}`}
+                      className={`combat-skill-slot ${canUse ? 'is-ready' : 'is-locked'} ${comboReady.includes(skill.id) ? 'is-combo' : ''}`}
+                    >
+                      <RpgIcon kind="skill" size={19} />
+                      <span className="combat-skill-slot-name">{skill.name}</span>
+                      <span className="combat-skill-slot-cost">{slotStatus}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
             <div className="combat-action-grid grid grid-cols-2 gap-2">
               {/* Attack */}
               <button

@@ -1,13 +1,20 @@
 import React from 'react';
 import { RpgIcon, RpgIconKind } from './RpgIcon';
+import { ParchmentSkin } from './CodexPrimitives';
 
 type PanelProps = React.PropsWithChildren<{ className?: string }>;
 
 export const FolioPage: React.FC<PanelProps> = ({ children, className = '' }) =>
   <div className={`folio-page mx-auto w-full max-w-lg px-3 pb-24 ${className}`}>{children}</div>;
 
-export const BestiaryPanel: React.FC<PanelProps> = ({ children, className = '' }) =>
-  <section className={`bestiary-panel ${className}`}>{children}</section>;
+export const BestiaryPanel: React.FC<PanelProps & React.HTMLAttributes<HTMLElement>> = ({ children, className = '', ...props }) =>
+  <section className={`bestiary-panel ${className}`} {...props}>{children}</section>;
+
+export const ParchmentPanel: React.FC<PanelProps & React.HTMLAttributes<HTMLElement> & { surface?: 'legacy' | 'tiled' }> = ({ children, className = '', surface = 'legacy', ...props }) =>
+  <section className={`${surface === 'tiled' ? 'codex-paper' : 'parchment-panel'} ${className}`} {...props}>
+    {surface === 'tiled' && <ParchmentSkin />}
+    {children}
+  </section>;
 
 export const LeatherPanel: React.FC<PanelProps> = ({ children, className = '' }) =>
   <section className={`leather-panel ${className}`}>{children}</section>;

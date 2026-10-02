@@ -72,6 +72,12 @@
 .pt-safe { padding-top: env(safe-area-inset-top); }
 .min-h-screen { min-height: 100dvh; }
 
+/* One mobile canvas in every host, including the local desktop preview. */
+#root { width: min(100%, 430px); min-height: 100dvh; margin-inline: auto; }
+.telegram-entry { display: grid; align-content: center; min-height: var(--tg-viewport-stable-height, 100dvh); padding: 16px 7px; background: #19120e; }
+.telegram-entry p { margin: 18px 4px; color: #392a1b; font: 16px/1.5 Georgia, serif; }
+.bottom-sheet-backdrop { max-width: 430px; margin-inline: auto; }
+
 .folio-page { color: var(--text-primary); }
 .bestiary-panel { background: linear-gradient(145deg, #191d20, #121518 70%); border: 1px solid var(--border-metal); border-radius: 14px; box-shadow: inset 0 1px rgb(255 255 255 / 2%); }
 .leather-panel { background: linear-gradient(145deg, #28221a, #191713 72%); border: 1px solid #554832; border-radius: 12px; box-shadow: inset 0 1px rgb(255 255 255 / 3%); }
@@ -154,6 +160,18 @@ button:disabled:active { transform: none; }
 }
 .game-nav-item { transition: color 160ms ease, background 160ms ease; }
 .game-nav-item.is-active { background: linear-gradient(180deg, rgb(164 126 63 / 17%), rgb(113 76 35 / 7%)); }
+.hero-settings-button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 0;
+  background: url('/assets/sprites/generated/ui/hero-reference/parts/square-tile.png') center / 100% 100% no-repeat;
+  color: #e2c487;
+}
+.hero-settings-button img, .hero-settings-button svg { width: 17px; height: 17px; filter: sepia(.75) saturate(1.1) brightness(1.15); }
+.hero-settings-button:focus-visible { outline: 2px solid #d2ad67; outline-offset: 2px; }
 .font-cinzel, .folio-title, .section-title { font-family: Georgia, "Times New Roman", serif; }
 .bestiary-panel {
   border-color: #4d4639;
@@ -329,10 +347,333 @@ button:disabled:active { transform: none; }
 .combat-action-potion { border-color: #71443e; background: linear-gradient(145deg, #321b1a, #171516); color: #e0b5a5; }
 .combat-action:disabled { filter: saturate(.45); }
 .combat-turn-status { border-color: #64553a; background: linear-gradient(110deg, #282217, #17191a); }
+.combat-skill-loadout { padding: 6px 7px 7px; border: 1px solid #675235; background: linear-gradient(180deg, rgb(47 35 23 / 96%), rgb(25 22 19 / 96%)); box-shadow: inset 0 0 0 1px rgb(10 8 6 / 55%); }
+.combat-skill-loadout-heading { display: flex; align-items: center; gap: 5px; margin: 0 1px 5px; color: #d5b777; font: 700 11px/1.2 Georgia, 'Times New Roman', serif; }
+.combat-skill-slot-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.combat-skill-slot { display: flex; min-width: 0; min-height: 66px; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 5px 2px 4px; border: 1px solid #84673d; background: url('/assets/sprites/generated/ui/hero-reference/parts/square-tile.png') center / 100% 100% no-repeat, linear-gradient(145deg, #443322, #211b16); color: #ead5a8; font-family: Georgia, 'Times New Roman', serif; text-align: center; box-shadow: inset 0 0 0 1px rgb(17 12 8 / 75%), 0 2px 4px #080707; }
+.combat-skill-slot.is-ready { cursor: pointer; }
+.combat-skill-slot.is-ready:hover:not(:disabled), .combat-skill-slot.is-ready:focus-visible { border-color: #e4c47e; filter: brightness(1.12); outline: none; }
+.combat-skill-slot.is-locked, .combat-skill-slot.is-empty { border-color: #574a37; color: #8e8066; filter: saturate(.55); }
+.combat-skill-slot.is-combo { border-color: #b99b58; color: #f2d992; box-shadow: inset 0 0 0 1px rgb(210 175 96 / 24%), 0 0 7px rgb(197 155 71 / 25%); }
+.combat-skill-slot-name { display: -webkit-box; width: 100%; min-height: 20px; overflow: hidden; font-size: 9px; line-height: 1.1; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.combat-skill-slot-cost { color: #bfaa7d; font: 9px/1 ui-monospace, Consolas, monospace; white-space: nowrap; }
+.combat-skill-slot.is-empty .combat-skill-slot-cost { color: #8e8066; }
 
 @media (max-width: 380px) {
   .combat-scene { min-height: 316px; }
   .combat-monster-art { height: 220px; width: 73%; }
+  .game-hud-inner { gap: 5px; }
+  .game-hud-resources { gap: 2px; }
+  .game-header .resource-badge { min-height: 36px; gap: 3px; padding-inline: 4px; font-size: 9px; }
+  .game-header .resource-badge svg, .game-header .resource-badge img { width: 13px; height: 13px; }
+  .hero-settings-button { width: 31px; height: 31px; flex-basis: 31px; }
+  .combat-skill-slot-grid { gap: 3px; }
+  .combat-skill-slot { min-height: 60px; padding-inline: 1px; }
+  .combat-skill-slot-name { min-height: 19px; font-size: 8px; }
+  .combat-skill-slot-cost { font-size: 8px; }
   .bestiary-dossier-paper { padding-inline: 13px; }
   .bestiary-marker { padding-inline: 4px; }
+}
+
+/* Physical field-journal shell and the bestiary reference spread. */
+.game-shell {
+  position: relative;
+  border: 28px solid transparent;
+  border-image-source: url('/assets/sprites/generated/ui/book-frame-9slice.webp');
+  border-image-slice: 140 fill;
+  border-image-width: 28px;
+  border-image-repeat: stretch;
+  background-color: #17130f;
+  background-image: url('/assets/sprites/generated/ui/leather-grain.webp');
+  background-size: 480px 480px;
+  background-repeat: repeat;
+  background-blend-mode: soft-light;
+  color: #33291e;
+  font-family: Georgia, "Times New Roman", serif;
+}
+.game-main {
+  width: 100%;
+  padding: 0 clamp(4px, 1.2vw, 18px) 78px;
+}
+.game-header {
+  background-color: rgb(28 22 17 / 96%);
+  background-image: url('/assets/sprites/generated/ui/leather-grain.webp');
+  background-size: 420px 420px;
+  background-blend-mode: soft-light;
+  border-bottom-color: #886d43;
+  box-shadow: 0 5px 18px rgb(0 0 0 / 25%);
+  backdrop-filter: none;
+}
+.game-header > div {
+  max-width: 100%;
+  justify-content: space-between;
+  padding-inline: clamp(8px, 2.1vw, 30px);
+}
+.game-hud-player { max-width: 680px; }
+.game-hud-avatar { overflow: visible; border-radius: 50%; box-shadow: 0 0 0 2px #241910, 0 0 0 3px #795931; }
+.game-hud-avatar-art { display: block; border-radius: 50%; object-position: 50% 25%; }
+.game-hud-level { z-index: 1; border-radius: 0 0 50% 50%; background: rgb(20 13 8 / 88%); font-size: 9px; line-height: 12px; }
+.game-hud-point-dot { position: absolute; z-index: 2; top: -3px; right: -4px; display: grid; width: 16px; height: 16px; place-items: center; border: 1px solid #f0d390; border-radius: 50%; background: #8d261d; color: #fff0c0; font: 700 12px/1 Georgia, serif; box-shadow: 0 1px 4px #000; }
+.game-hud-name { color: #eed8ac; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; }
+.game-hud-class { color: #c4ad83; }
+.game-hud-exp { min-width: 0; }
+.game-hud-resources { gap: 4px; }
+.game-header .resource-badge { border-radius: 4px; }
+.game-header img { filter: sepia(.16) saturate(.82); }
+.game-nav {
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(0px, env(safe-area-inset-bottom));
+  width: min(calc(100% - 16px), 414px);
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid #705a37;
+  border-radius: 4px 4px 0 0;
+  background-color: #1b1712;
+  background-image: url('/assets/sprites/generated/ui/leather-grain.webp');
+  background-size: 380px 380px;
+  background-blend-mode: soft-light;
+  box-shadow: 0 -7px 22px rgb(0 0 0 / 38%);
+}
+.game-nav > div { height: 66px; }
+.game-nav-item {
+  position: relative;
+  border-inline: 1px solid transparent;
+  color: #b9ad97;
+  clip-path: polygon(0 0, 100% 0, 100% 88%, 50% 100%, 0 88%);
+  transition: color 160ms ease, background-color 160ms ease;
+}
+.game-nav-item:hover { background: rgb(218 187 128 / 8%); }
+.game-nav-item.is-active {
+  border-inline-color: #665332;
+  background: linear-gradient(180deg, rgb(187 147 79 / 24%), rgb(99 72 37 / 10%));
+  color: #eed5a1;
+}
+.game-nav-item.is-active::before {
+  position: absolute;
+  top: 0;
+  left: 24%;
+  width: 52%;
+  height: 1px;
+  background: #c5a568;
+  content: "";
+}
+.game-drawer, .dialog-frame {
+  color: #e1d7c3;
+  background-color: #201912;
+  background-image: url('/assets/sprites/generated/ui/leather-grain.webp');
+  background-size: 380px 380px;
+  background-blend-mode: soft-light;
+  border-color: #806842;
+  border-radius: 5px 5px 0 0;
+}
+.game-section {
+  border-radius: 3px 3px 0 0;
+  background: rgb(26 22 17 / 80%);
+}
+.game-section:hover, .game-section.is-active { background: #392c1c; }
+.game-section.is-active { color: #eed5a1; }
+.resource-badge {
+  border-radius: 4px;
+  background-color: #211a14;
+}
+.rpg-button, .rpg-icon-button { border-radius: 4px; }
+.folio-title, .section-title { font-family: Georgia, "Times New Roman", serif; }
+
+.hunt-folio {
+  display: grid;
+  max-width: 1530px;
+  gap: 14px;
+  padding: 10px 10px 104px;
+}
+.hunt-region-banner {
+  position: relative;
+  isolation: isolate;
+  min-height: 132px;
+  overflow: hidden;
+  border: 1px solid #90764e;
+  color: #eee2c9;
+  background: #202523;
+  box-shadow: 0 8px 22px rgb(0 0 0 / 30%), inset 0 0 0 2px rgb(17 14 10 / 36%);
+}
+.hunt-region-backdrop, .hunt-region-shade { position: absolute; inset: 0; z-index: -1; }
+.hunt-region-backdrop > [data-battle-scene] > img { filter: brightness(.5) saturate(.72) sepia(.1); }
+.hunt-region-shade { z-index: 0; background: linear-gradient(90deg, rgb(11 13 12 / 87%), rgb(11 13 12 / 60%) 55%, rgb(11 13 12 / 20%)); }
+.hunt-region-content { position: relative; z-index: 1; display: flex; min-height: 132px; flex-direction: column; justify-content: space-between; padding: 13px clamp(16px, 2.5vw, 34px); }
+.hunt-region-kicker, .hunt-region-level { display: inline-flex; align-items: center; gap: 7px; color: #d4c09b; font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+.hunt-region-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+.hunt-region-heading h1 { margin: 0; color: #f0e3c8; font-size: clamp(21px, 2.1vw, 30px); line-height: 1.1; }
+.hunt-region-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 16px; margin-top: 8px; color: #c9c0af; font-size: 11px; }
+.hunt-region-modifier { color: #e2c17b; }
+.hunt-region-level { flex: 0 0 auto; padding: 7px 9px; border: 1px solid rgb(196 163 105 / 52%); background: rgb(11 12 11 / 62%); font-family: var(--font-mono); font-size: 10px; letter-spacing: .025em; }
+.bestiary-spread {
+  display: grid;
+  min-height: 440px;
+  grid-template-columns: minmax(235px, .75fr) minmax(370px, 1.45fr) minmax(270px, .9fr);
+  gap: 13px;
+}
+.bestiary-index {
+  display: flex;
+  min-height: 440px;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 15px 14px 12px;
+  border: 1px solid #947950;
+  border-radius: 2px;
+  color: #382d21;
+  background-color: #decba6;
+  background-image: url('/assets/sprites/generated/ui/parchment-surface.webp');
+  background-size: 460px 460px;
+  box-shadow: inset 0 0 0 3px rgb(111 83 46 / 12%), 0 7px 18px rgb(0 0 0 / 28%);
+}
+.bestiary-index-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 1px 1px 11px; border-bottom: 1px solid rgb(86 64 37 / 34%); }
+.bestiary-index .section-title { color: #413222; font-size: 17px; }
+.bestiary-index .bestiary-index-heading .text-\[10px\] { color: #746044; }
+.bestiary-index .rpg-icon-button { width: 38px; min-width: 38px; height: 38px; border-color: #806746; color: #55442e; background: rgb(241 224 190 / 52%); }
+.bestiary-list { display: flex; min-height: 0; max-height: 100%; flex: 1; flex-direction: column; overflow: auto; padding-right: 1px; scrollbar-color: #96764b #d0ba8c; }
+.bestiary-index .bestiary-entry-row {
+  min-height: 57px;
+  gap: 9px;
+  padding: 4px 5px;
+  border: 0;
+  border-bottom: 1px solid rgb(95 70 42 / 22%);
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  color: #3d3023;
+  background: transparent;
+  box-shadow: none;
+}
+.bestiary-index .bestiary-entry-row:hover { background: rgb(131 98 52 / 9%); }
+.bestiary-index .bestiary-entry-row.is-selected {
+  border-left-color: #8b352c;
+  background: rgb(139 100 49 / 18%);
+  box-shadow: inset 0 -1px rgb(100 68 35 / 13%);
+  color: #2f241a;
+}
+.bestiary-index .bestiary-entry-row > span:nth-child(2) > span:first-child { color: #382a1d; }
+.bestiary-index .bestiary-entry-row > span:nth-child(2) > span + span { color: #74634d; }
+.bestiary-index .bestiary-entry-portrait { width: 42px; height: 42px; flex-basis: 42px; border-color: #796344; border-radius: 2px; background: #27251f; }
+.bestiary-index .bestiary-entry-chevron { color: #866b43; }
+.bestiary-index .bestiary-marker { padding: 2px 4px; font-size: 8px; }
+.bestiary-index-progress { margin-top: auto; padding-top: 10px; }
+.bestiary-index-progress .ornament-divider { background: linear-gradient(90deg, transparent, #876c44 18%, #876c44 82%, transparent); }
+.bestiary-progress-row { display: grid; gap: 8px; padding-top: 9px; }
+.bestiary-progress-label { display: flex; justify-content: space-between; margin-bottom: 3px; color: #66543c; font-size: 10px; }
+.bestiary-index .progress-track { border-color: #9a8055; background: #bca67d; }
+.bestiary-index .progress-fill { background: #8f6037; }
+.bestiary-empty-note { margin: 12px 0; color: #66543c; font-size: 12px; }
+.bestiary-illustration {
+  position: relative;
+  display: grid;
+  min-height: 440px;
+  overflow: hidden;
+  place-items: center;
+  border: 1px solid #997b4d;
+  border-radius: 2px;
+  background-color: #352b1e;
+  box-shadow: inset 0 0 0 4px rgb(12 12 10 / 52%), 0 7px 20px rgb(0 0 0 / 34%);
+}
+.bestiary-illustration-paper { position: absolute; inset: 5px; background-color: #dfcca5; background-image: url('/assets/sprites/generated/ui/parchment-surface.webp'); background-size: 480px 480px; box-shadow: inset 0 0 0 4px rgb(111 83 46 / 15%); }
+.bestiary-illustration-wash { position: absolute; inset: 5px; background: radial-gradient(ellipse at center, transparent 48%, rgb(73 54 31 / 13%) 100%); pointer-events: none; }
+.bestiary-art-stamp { border-color: rgb(207 176 119 / 65%); border-radius: 2px; background: rgb(15 17 15 / 70%); }
+.bestiary-illustration-top { position: absolute; z-index: 2; top: 17px; left: 18px; }
+.bestiary-monster-art { position: absolute; z-index: 1; inset: 6% 2% 5%; width: 96%; height: 89%; object-fit: contain; filter: drop-shadow(0 14px 22px rgb(0 0 0 / 72%)) saturate(.82) sepia(.06); }
+.bestiary-illustration-caption { position: absolute; z-index: 2; right: 18px; bottom: 15px; left: 18px; display: flex; align-items: center; gap: 10px; color: #56432c; font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.bestiary-illustration-caption i { width: 28px; height: 1px; background: #c3a36a; }
+.bestiary-illustration-empty { position: relative; z-index: 2; display: grid; justify-items: center; gap: 12px; color: #c3b497; font-size: 12px; }
+.parchment-panel.bestiary-dossier {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  padding: clamp(17px, 2vw, 25px);
+  border: 1px solid #96784c;
+  border-radius: 2px;
+  color: #382b1e;
+  background-color: #decba6;
+  background-image: url('/assets/sprites/generated/ui/parchment-surface.webp');
+  background-size: 480px 480px;
+  box-shadow: inset 0 0 0 3px rgb(111 83 46 / 11%), 0 7px 18px rgb(0 0 0 / 28%);
+}
+.bestiary-dossier-heading { display: flex; align-items: center; gap: 12px; }
+.bestiary-dossier-seal { display: grid; width: 45px; height: 45px; flex: 0 0 45px; place-items: center; border: 1px solid #856a44; border-radius: 50%; color: #5f482d; background: rgb(176 143 91 / 18%); box-shadow: inset 0 0 0 3px rgb(117 87 49 / 10%); }
+.bestiary-dossier-eyebrow { color: #776044; font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.game-shell main h2.bestiary-dossier-name { margin-top: 2px; color: #302417; font-size: clamp(21px, 1.65vw, 27px); font-weight: 700; line-height: 1.15; }
+.bestiary-dossier-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px; }
+.bestiary-dossier-tags span { padding: 4px 6px; border: 1px solid rgb(107 79 46 / 38%); color: #56432d; font-family: var(--font-mono); font-size: 9px; line-height: 1.2; }
+.bestiary-dossier-tags span.is-boss { border-color: #854c41; color: #71352e; }
+.bestiary-ink-divider { margin: 15px 0 9px; background: linear-gradient(90deg, transparent, #755c3b 12%, #755c3b 88%, transparent); }
+.bestiary-dossier-stats .stat-row { border-bottom: 1px solid rgb(85 66 42 / 15%); }
+.bestiary-dossier .stat-row > span { color: #6f5b43; }
+.bestiary-dossier .stat-row strong { color: #382b1e; }
+.bestiary-dossier .stat-row strong.text-\[\#cf8885\] { color: #7e4038; }
+.bestiary-habitat { display: flex; align-items: flex-start; gap: 9px; margin-top: 16px; padding: 11px 0; border-block: 1px solid rgb(85 66 42 / 19%); color: #745a38; }
+.bestiary-habitat > span { display: grid; gap: 3px; }
+.bestiary-habitat small { color: #806949; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.bestiary-habitat strong { color: #382b1e; font-size: 12px; font-weight: 600; line-height: 1.35; }
+.bestiary-loot { margin-top: 14px; }
+.bestiary-section-label { margin-bottom: 7px; color: #6b5337; font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.bestiary-loot-list { display: flex; flex-wrap: wrap; gap: 6px; color: #382b1e; font-size: 12px; }
+.bestiary-loot-list > span:not(.is-empty) { padding: 4px 7px; border: 1px solid rgb(107 79 46 / 30%); background: rgb(255 248 226 / 22%); }
+.bestiary-loot-list .is-empty { color: #75634d; font-style: italic; }
+.bestiary-dossier-empty { justify-content: center; color: #695538; font-size: 13px; text-align: center; }
+.hunt-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 330px); align-items: center; gap: 14px; padding: 11px 13px; border: 1px solid #826843; background-color: #211912; background-image: url('/assets/sprites/generated/ui/leather-grain.webp'); background-size: 360px 360px; background-blend-mode: soft-light; box-shadow: inset 0 1px rgb(250 225 180 / 8%), 0 6px 18px rgb(0 0 0 / 27%); }
+.hunt-alerts { display: grid; gap: 8px; }
+.hunt-notice { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px; }
+.hunt-energy-error { display: grid; gap: 8px; padding: 9px; border-color: #754b43; }
+.hunt-warning-mark { display: grid; width: 20px; height: 20px; flex: 0 0 20px; place-items: center; border: 1px solid #9c6558; color: #e1b7b3; font-weight: 700; }
+.hunt-action-area { min-width: 0; }
+.hunt-action-button { min-height: 52px; border: 1px solid #c29a5f; border-radius: 3px; box-shadow: inset 0 0 0 2px rgb(27 13 10 / 34%), 0 4px 12px rgb(0 0 0 / 30%); }
+.hunt-action-note { margin: 5px 0 0; color: #e0bd7e; font-size: 11px; text-align: center; }
+.hunt-settings { display: grid; gap: 10px; padding: 13px; }
+.hunt-controls:has(.hunt-alerts:empty) { grid-template-columns: minmax(0, 1fr); }
+.hunt-controls:has(.hunt-alerts:empty) .hunt-action-area { width: min(100%, 390px); justify-self: center; }
+
+/* Mobile composition is unconditional: a wide browser must not activate a desktop spread. */
+  .game-shell { min-height: var(--tg-viewport-stable-height, 100dvh); border-width: 9px; border-image-width: 9px; border-image-repeat: round; padding-top: max(env(safe-area-inset-top), var(--tg-content-safe-area-inset-top, 0px)); }
+  .game-main { padding-inline: 0; padding-bottom: 78px; }
+  .game-header { padding-inline: 2px; }
+  .game-header > div { padding-inline: 2px; }
+  .game-hud-player { max-width: none; }
+  .game-header .resource-badge { min-height: 38px; padding-inline: 7px; font-size: 10px; }
+  .game-header .resource-badge svg { width: 14px; height: 14px; }
+  .game-nav { left: 8px; right: 8px; width: min(calc(100% - 16px), 414px); padding-bottom: max(env(safe-area-inset-bottom), var(--tg-content-safe-area-inset-bottom, 0px)); }
+  .game-nav > div { height: 61px; }
+  .game-nav-item { gap: 3px; font-size: 10px; }
+  .hunt-folio { gap: 10px; padding: 5px 4px 100px; }
+  .hunt-region-banner, .hunt-region-content { min-height: 122px; }
+  .hunt-region-content { padding: 11px 12px; }
+  .hunt-region-heading { align-items: flex-start; }
+  .hunt-region-heading h1 { font-size: 21px; }
+  .hunt-region-level { padding: 6px; font-size: 9px; }
+  .hunt-region-meta { gap: 6px 10px; font-size: 10px; }
+  .bestiary-spread { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .bestiary-index { grid-column: auto; grid-row: auto; min-height: 0; padding: 10px 9px 8px; }
+  .bestiary-index-heading { padding-bottom: 8px; }
+  .bestiary-index .section-title { font-size: 15px; }
+  .bestiary-list { flex: initial; flex-direction: row; gap: 0; max-height: none; overflow-x: auto; overflow-y: hidden; padding-bottom: 3px; }
+  .bestiary-index .bestiary-entry-row { width: 164px; min-width: 164px; min-height: 56px; flex: 0 0 164px; border-right: 1px solid rgb(95 70 42 / 22%); border-bottom: 0; }
+  .bestiary-index .bestiary-entry-portrait { width: 37px; height: 37px; flex-basis: 37px; }
+  .bestiary-index .bestiary-entry-row > span:nth-child(2) > span:first-child { font-size: 11px; }
+  .bestiary-index .bestiary-marker { display: none; }
+  .bestiary-index-progress { padding-top: 8px; }
+  .bestiary-progress-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+  .bestiary-progress-label { gap: 3px; font-size: 9px; }
+  .bestiary-illustration, .bestiary-dossier { grid-column: auto; }
+  .bestiary-illustration { min-height: min(82vw, 350px); }
+  .bestiary-monster-art { inset: 8% 2% 6%; width: 96%; height: 86%; }
+  .bestiary-illustration-top { top: 12px; left: 12px; }
+  .bestiary-art-stamp { min-height: 27px; font-size: 9px; }
+  .bestiary-illustration-caption { right: 13px; bottom: 12px; left: 13px; }
+  .parchment-panel.bestiary-dossier { padding: 15px; }
+  .bestiary-habitat { margin-top: 10px; padding-block: 8px; }
+  .bestiary-loot { margin-top: 10px; }
+  .hunt-controls { grid-template-columns: minmax(0, 1fr); gap: 9px; padding: 9px; }
+  .hunt-action-area { grid-row: 1; }
+  .hunt-action-button { min-height: 48px; }
+@media (max-width: 380px) {
+  .hunt-region-level { gap: 4px; font-size: 8px; }
+  .hunt-region-meta { gap: 5px 7px; }
+  .bestiary-index .bestiary-entry-row { width: 148px; min-width: 148px; flex-basis: 148px; gap: 7px; }
+  .bestiary-progress-row { gap: 5px; }
+  .bestiary-progress-label { font-size: 8px; }
 }

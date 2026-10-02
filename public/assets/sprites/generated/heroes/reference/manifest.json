@@ -1,0 +1,17 @@
+{
+  "source": "User-provided updated hero class artwork",
+  "format": "WebP, 1254x1254, quality 88",
+  "classOrder": [
+    "warrior",
+    "berserker",
+    "knight",
+    "rogue",
+    "assassin",
+    "archer",
+    "mage",
+    "necromancer",
+    "paladin",
+    "druid"
+  ],
+  "note": "Wired to the matching class definitions in gameData.ts and used by the character picker, hero profile, and compact game header. The legacy hunter portrait remains separate because the supplied set contains ten other classes."
+}

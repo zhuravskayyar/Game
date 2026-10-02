@@ -32,7 +32,7 @@ export const CharacterCreationModal: React.FC = () => {
   const activeClassDef = CLASSES[selectedClass];
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#07090e] overflow-y-auto p-4 flex flex-col items-center justify-center">
+    <div className="fixed inset-0 z-50 mx-auto max-w-[430px] bg-[#07090e] overflow-y-auto p-4 flex flex-col items-center justify-center">
       <div className="w-full max-w-md space-y-4 my-auto">
         {/* Logo / Header */}
         <div className="text-center space-y-1">

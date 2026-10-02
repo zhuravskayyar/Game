@@ -1,0 +1,65 @@
+/* All paper pieces use the same 1:4 source scale. Changing the panel size
+   changes repetition, never the dimensions of its corners or grain. */
+.codex-paper {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 48px;
+  padding: 22px;
+  color: #302318;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.codex-paper-skin {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 24px;
+  grid-template-rows: 24px minmax(0, 1fr) 24px;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px #080604b3);
+}
+.codex-paper-part { min-width: 0; min-height: 0; background-repeat: no-repeat; }
+.codex-paper-tl { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-tl.png'); background-size: 24px 24px; }
+.codex-paper-tr { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-tr.png'); background-size: 24px 24px; }
+.codex-paper-bl { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-bl.png'); background-size: 24px 24px; }
+.codex-paper-br { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-br.png'); background-size: 24px 24px; }
+.codex-paper-top { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-top.png'); background-size: 206px 24px; background-repeat: repeat-x; }
+.codex-paper-bottom { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-bottom.png'); background-size: 206px 24px; background-repeat: repeat-x; }
+.codex-paper-left { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-left.png'); background-size: 24px 208px; background-repeat: repeat-y; }
+.codex-paper-right { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-right.png'); background-size: 24px 208px; background-repeat: repeat-y; }
+.codex-paper-fill { background-image: url('/assets/sprites/generated/ui/hero-reference/parts/paper-fill.webp'); background-size: 627px 627px; background-repeat: repeat; }
+
+/* 320px-high source ribbon, uniformly scaled to 40px. Fixed 51px caps. */
+.codex-ribbon {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  min-width: 104px;
+  min-height: 40px;
+  margin: 0;
+  padding: 6px 24px;
+  color: #302318;
+  font: 700 18px/1.2 Georgia, 'Times New Roman', serif;
+}
+.codex-ribbon-skin { position: absolute; z-index: -1; inset: 0; display: grid; grid-template-columns: 51px minmax(0, 1fr) 51px; pointer-events: none; }
+.codex-ribbon-left { background: url('/assets/sprites/generated/ui/hero-reference/parts/ribbon-left.png') left center / 51px 40px no-repeat; }
+.codex-ribbon-center { background: url('/assets/sprites/generated/ui/hero-reference/parts/ribbon-center.png') left center / 81.25px 40px repeat-x; }
+.codex-ribbon-right { background: url('/assets/sprites/generated/ui/hero-reference/parts/ribbon-right.png') right center / 51px 40px no-repeat; }
+.codex-ribbon-title { position: relative; overflow-wrap: anywhere; }
+
+.codex-square-tile {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  width: var(--tile-size, 44px);
+  aspect-ratio: 1;
+  place-items: center;
+  padding: 7px;
+  color: #e7c887;
+  background: url('/assets/sprites/generated/ui/hero-reference/parts/square-tile.png') center / contain no-repeat;
+}
+.codex-square-button { display: inline-grid; width: 44px; height: 44px; place-items: center; padding: 0; border: 0; background: none; font: 24px/1 Georgia, serif; }
+.codex-square-button:disabled { opacity: .5; }
+.codex-square-button:active:not(:disabled) { transform: translateY(1px); }

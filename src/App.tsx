@@ -5,7 +5,12 @@ import { BottomNavigation, TabId } from './components/layout/BottomNavigation';
 import { CombatScreen } from './components/combat/CombatScreen';
 import { CharacterCreationModal } from './components/dialogs/CharacterCreationModal';
 import { OfflineReportModal } from './components/dialogs/OfflineReportModal';
-import { initTelegramApp } from './utils/telegram';
+import { initTelegramApp, isInsideTelegram } from './utils/telegram';
+import { TelegramEntry } from './components/layout/TelegramEntry';
+
+const HeroFoundationPreview = import.meta.env.DEV
+  ? lazy(() => import('./components/character/HeroFoundationPreview').then(module => ({ default: module.HeroFoundationPreview })))
+  : null;
 
 const WorldScreen = lazy(() => import('./components/world/WorldScreen').then(module => ({ default: module.WorldScreen })));
 const ArenaScreen = lazy(() => import('./components/arena/ArenaScreen').then(module => ({ default: module.ArenaScreen })));
@@ -49,10 +54,13 @@ const MainGameContent: React.FC = () => {
   return (
     <div className="game-shell min-h-screen pt-safe text-slate-100 flex flex-col font-sans select-none overflow-x-hidden">
       {/* Top Header */}
-      <TopHeader onOpenCharacterSheet={() => setIsCharacterSheetOpen(true)} />
+      <TopHeader
+        onOpenCharacterSheet={() => setIsCharacterSheetOpen(true)}
+        onOpenMore={() => { setIsCharacterSheetOpen(false); setCurrentTab('more'); }}
+      />
 
       {/* Main View Area */}
-      <main className="flex-1 w-full max-w-lg mx-auto">
+      <main className="game-main flex-1 w-full mx-auto">
         <Suspense fallback={<div role="status" className="p-6 text-center text-sm text-slate-400">Загрузка раздела…</div>}>
         {isCharacterSheetOpen ? (
           <CharacterScreen onClose={() => setIsCharacterSheetOpen(false)} />
@@ -96,6 +104,12 @@ const MainGameContent: React.FC = () => {
 };
 
 export default function App() {
+  // The browser preview is only compiled into local development builds.
+  // Production game API access additionally requires server-validated initData.
+  if (import.meta.env.PROD && !isInsideTelegram()) return <TelegramEntry />;
+  if (HeroFoundationPreview && new URLSearchParams(window.location.search).get('preview') === 'hero-foundation') {
+    return <Suspense fallback={null}><HeroFoundationPreview /></Suspense>;
+  }
   return (
     <GameProvider>
       <MainGameContent />
